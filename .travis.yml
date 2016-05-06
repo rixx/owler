@@ -1,0 +1,16 @@
+sudo: false
+language: python
+python:
+  - 3.5
+  - pypy3
+
+install:
+  - pip install -r requirements.txt
+  - pip install coveralls
+script:
+  - isort -c -rc .
+  - pylama
+  - pip list --outdated
+  - coverage run -m py.test tests
+after_success:
+  - coveralls
