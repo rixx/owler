@@ -104,3 +104,5 @@ Session.vim
 # auto-generated tag files
 tags
 
+# captchas
+*.png
