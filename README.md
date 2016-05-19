@@ -30,4 +30,6 @@ difference if you only submit your new solutions, but it *will* prevent mindless
 
 ## Contributing
 
-Contributions are welcome. Shoot me an issue, PR or mail if you have any questions or ideas here!
+Contributions are welcome. Shoot me an issue, PR or mail if you have any questions or ideas here! Look
+[here](CONTRIBUTING.md) for more detailed information regarding contributions, and please also look at this project's
+[Code of Conduct](CODE_OF_CONDUCT.md).
