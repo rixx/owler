@@ -1,6 +1,4 @@
-import math
 from operator import itemgetter
-import sys
 
 from PIL import Image
 
@@ -8,24 +6,29 @@ from PIL import Image
 NUMS = 5
 
 
-def closest(top, color):
-    ri, gi, bi = color
-    distances = [(ro - ri, go - gi, bo - bi) for ro, go, bo in top]
-    distances = [sum((r**2, g**2, b**2)) for r,g,b in distances]
-    index, closest = min((val, index) for val, index in enumerate(distances))
-    return top[index]
+def closest_color(color, colors):
+    red, green, blue = color
+    distances = [(r - red, g - green, b - blue) for r, g, b in colors]
+    distances = [sum((r**2, g**2, b**2)) for r, g, b in distances]
+    color_index, _ = min((val, index) for val, index in enumerate(distances))
+    return colors[color_index]
 
 
-im = Image.open('captcha.png')
-w, h = im.size
-histogram = sorted(im.getcolors(w*h), key=itemgetter(0), reverse=True)[:NUMS+1]
-top = [color for amount, color in histogram]
-background = histogram[0][1]
+captcha = Image.open('captcha.png')
+pixels = captcha.load()
+width, height = captcha.size
 
-pix = im.load()
-for x in range(w):
-    for y in range(h):
-        if not pix[x,y] in top:
-            pix[x,y] = closest(top, pix[x,y])
+histogram = captcha.getcolors(width * height)
+top = sorted(histogram, key=itemgetter(0), reverse=True)[:NUMS + 1]
+top_colors = [color for amount, color in top]
+background = top_colors[0]
 
-im.save('output.png')
+for x in range(width):
+    for y in range(height):
+        if not pixels[x, y] in top_colors:
+            pixels[x, y] = closest_color(pixels[x, y], top_colors)
+
+for letter in range(1, NUMS + 1):
+    """ get slice borders and images """
+
+captcha.save('output.png')
