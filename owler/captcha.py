@@ -14,21 +14,39 @@ def closest_color(color, colors):
     return colors[color_index]
 
 
-captcha = Image.open('captcha.png')
-pixels = captcha.load()
-width, height = captcha.size
+def get_top_colors(image, amount):
+    width, height = image.size
+    histogram = image.getcolors(width * height)
+    top = sorted(histogram, key=itemgetter(0), reverse=True)[:amount]
+    return [color for amount, color in top]
 
-histogram = captcha.getcolors(width * height)
-top = sorted(histogram, key=itemgetter(0), reverse=True)[:NUMS + 1]
-top_colors = [color for amount, color in top]
-background = top_colors[0]
 
-for x in range(width):
-    for y in range(height):
-        if not pixels[x, y] in top_colors:
-            pixels[x, y] = closest_color(pixels[x, y], top_colors)
+def reduce_to_colorset(image, colorset):
+    width, height = image.size
+    pixels = image.load()
+    for x in range(width):
+        for y in range(height):
+            if not pixels[x, y] in colorset:
+                pixels[x, y] = closest_color(pixels[x, y], colorset)
 
-for letter in range(1, NUMS + 1):
-    """ get slice borders and images """
 
-captcha.save('output.png')
+def crop_to_colors(image, colorset):
+    yield image
+
+
+def solve_captcha(filename='captcha.png'):
+    captcha = Image.open(filename)
+    result = []
+
+    top_colors = get_top_colors(captcha, amount=NUMS+1)
+    reduce_to_colorset(captcha, top_colors)
+
+    for letter in crop_to_colors(captcha, top_colors):
+        pass
+
+    captcha.save('output.png')
+    return result
+
+
+if __name__ == '__main__':
+    solve_captcha()
