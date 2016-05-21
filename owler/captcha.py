@@ -45,6 +45,14 @@ def reduce_to_colorset(image, colorset):
                 pixels[x, y] = closest_color(pixels[x, y], colorset)
 
 
+def replace_color(image, old, new):
+    width, height = image.size
+    pixels = image.load()
+    for x in range(width):
+        for y in range(height):
+            pixels[x, y] = new if pixels[x, y] == old else pixels[x, y]
+
+
 def crop_to_colors(image, colorset, ignore_first=True):
     color_list = colorset[1:] if ignore_first else colorset
     borders = {color: {c: 0 for c in ['xleft', 'xright', 'yupper', 'ylower']} for color in colorset}
@@ -63,6 +71,7 @@ def crop_to_colors(image, colorset, ignore_first=True):
         border = borders[color]
         color_image = image.crop((border['xleft'], border['yupper'], border['xright'], border['ylower']))
         color_image.load()
+        replace_color(color_image, color, (0, 0, 0))
         color_image.save('{}.png'.format(color))
         yield color_image
 
