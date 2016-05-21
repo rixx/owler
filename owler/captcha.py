@@ -1,3 +1,4 @@
+from collections import namedtuple
 from operator import itemgetter
 
 from PIL import Image
@@ -30,8 +31,27 @@ def reduce_to_colorset(image, colorset):
                 pixels[x, y] = closest_color(pixels[x, y], colorset)
 
 
-def crop_to_colors(image, colorset):
-    yield image
+def crop_to_colors(image, colorset, ignore_first=True):
+    color_list = colorset[1:] if ignore_first else colorset
+    Border = namedtuple('Border', ['xleft', 'xright', 'yupper', 'ylower'])
+    borders = {color: {c: 0 for c in ['xleft', 'xright', 'yupper', 'ylower']} for color in colorset}
+
+    width, height = image.size
+    pixels = image.load()
+    for x in range(width):
+        for y in range(height):
+            color = pixels[x, y]
+            borders[color]['xleft'] = borders[color]['xleft'] or x
+            borders[color]['xright'] = x
+            borders[color]['yupper'] = min(y, borders[color]['yupper'])
+            borders[color]['ylower'] = max(y, borders[color]['ylower'])
+
+    for color in color_list:
+        border = borders[color]
+        color_image = image.crop((border['xleft'], border['yupper'], border['xright'], border['ylower']))
+        color_image.load()
+        color_image.save('{}.png'.format(color))
+        yield color_image
 
 
 def solve_captcha(filename='captcha.png'):
