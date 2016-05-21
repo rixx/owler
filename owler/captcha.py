@@ -1,10 +1,22 @@
-from collections import namedtuple
+import math
 from operator import itemgetter
 
 from PIL import Image
 
-
 NUMS = 5
+
+
+class VectorCompare:
+    def magnitude(self, values):
+        total = sum(element**2 for element, count in values.iteritems())
+        return math.sqrt(total)
+
+    def relation(self, values1, values2):
+        max_value = 0
+        for element, count in values1.iteritems():
+            if element in values2:
+                max_value += count * values2[element]
+        return max_value / (self.magnitude(values1) * self.magnitude(values2))
 
 
 def closest_color(color, colors):
@@ -33,7 +45,6 @@ def reduce_to_colorset(image, colorset):
 
 def crop_to_colors(image, colorset, ignore_first=True):
     color_list = colorset[1:] if ignore_first else colorset
-    Border = namedtuple('Border', ['xleft', 'xright', 'yupper', 'ylower'])
     borders = {color: {c: 0 for c in ['xleft', 'xright', 'yupper', 'ylower']} for color in colorset}
 
     width, height = image.size
