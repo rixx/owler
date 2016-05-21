@@ -6,17 +6,19 @@ from PIL import Image
 NUMS = 5
 
 
-class VectorCompare:
-    def magnitude(self, values):
-        total = sum(element**2 for element, count in values.iteritems())
-        return math.sqrt(total)
+def vector_magnitude(values):
+    """ calculates the magnitude of a dict with {value: amount} """
+    total = sum(element**2 for element, count in values.iteritems())
+    return math.sqrt(total)
 
-    def relation(self, values1, values2):
-        max_value = 0
-        for element, count in values1.iteritems():
-            if element in values2:
-                max_value += count * values2[element]
-        return max_value / (self.magnitude(values1) * self.magnitude(values2))
+
+def vector_relation(values1, values2):
+    """ calculates the relationship of two dicts """
+    total = 0
+    for element, count in values1.iteritems():
+        if element in values2:
+            total += count * values2[element]
+    return total / (vector_magnitude(values1) * vector_magnitude(values2))
 
 
 def closest_color(color, colors):
