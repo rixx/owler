@@ -92,3 +92,10 @@ def solve_captcha(filename='captcha.png'):
 
 if __name__ == '__main__':
     solve_captcha()
+
+"""
+Idea:
+    - build training set with tesseract, as master uses it to solve now
+    - write and train neural net
+    - keep parameters and use neural net instead of external deps to tesseract
+"""
